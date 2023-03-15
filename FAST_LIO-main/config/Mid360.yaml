@@ -1,0 +1,71 @@
+common:
+    lid_topic:  "/livox/lidar"
+    imu_topic:  "/livox/imu"
+#    imu_topic:  "/mavros/imu/data_raw"
+    time_sync_en: false         # ONLY turn on when external time synchronization is really not possible
+    odom_topic: "/lidar_slam/odom"
+    frame_id: "world"
+    onboard: true
+
+preprocess:
+    lidar_type: 1                # Livox Avia LiDAR
+    feature_extract_en: false
+    scan_line: 6
+    blind: 1.0
+
+
+mapping:
+    imu_en: true
+    acc_cov: 0.1
+    gyr_cov: 0.1
+    b_acc_cov: 0.0001
+    b_gyr_cov: 0.0001
+    fov_degree:    90
+    det_range:     450.0
+    time_offset: 0
+    extrinsic_T: [ 0.0, 0.0, 0.0]  # [ 0.04165, 0.02326, -0.0284 ]
+    extrinsic_R: [ 1,0,0,0,1,0,0,0,1]
+#     extrinsic_R: [ -0.009560, -0.999954, -0.000865,
+#  0.999282, -0.009522, -0.036669, 
+#  0.036660, -0.001215,  0.999327]
+
+publish:
+    path_en:  true
+    scan_publish_en:  true       # false: close all the point cloud output
+    dense_publish_en: false       # false: low down the points number in a global-frame point clouds scan.
+    scan_bodyframe_pub_en: false  # true: output the point cloud scans in IMU-body-frame
+
+pcd_save:
+    pcd_save_en: false
+    interval: -1                 # how many LiDAR frames saved in each pcd file; 
+                                 # -1 : all frames will be saved in ONE pcd file, may lead to memory crash when having too much frames.
+                                 
+                                 
+                                 
+# This is the extrisic from lidar_imu to PX4 IMU
+extrisic_with_drone:
+    T: [ 0.0, 0.0, 0.0 ]  # [ 0.04165, 0.02326, -0.0284 ]
+    Euler: [0.0, 0.0, 0.0] # euler angle in rad
+
+accumulate_frame:
+    enable: true
+    acc_num_per_frame: 5
+    init_times: 10
+
+imu_propagate:
+    enable: true
+    # freq: 100
+    # lidar_freq: 50
+    # imu_freq: 200
+    topic: "/lidar_slam/imu_propagate"
+
+
+voxel:
+    voxel_map_en: false
+    pub_plane_en: false
+    match_eigen_value: 0.005
+    min_eigen_value: 0.005
+    match_s: 0.9
+    sigma_num: 3
+    voxel_size: 1
+    layer: 1
